@@ -6,7 +6,7 @@
 /*   By: myang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/07 12:46:14 by myang             #+#    #+#             */
-/*   Updated: 2017/09/24 16:40:45 by myang            ###   ########.fr       */
+/*   Updated: 2017/10/25 15:47:56 by myang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,36 @@ static void	trz(t_env *e, t_key *key)
 	if (key->mvmnt_f == TRUE || key->mvmnt_b == TRUE ||
 			key->mvmnt_r == TRUE || key->mvmnt_l == TRUE)
 		mvmnt = mvmnt_camdir(e, e->cam, e->cam->poscam[0], e->cam->poscam[1]);
-	clear_all(e, FALSE);
-	raycast_win_l(e, e->ray);
-	mlx_put_image_to_window(e->mlx, e->win, e->img->i_img, 0, 0);
-	interface_txt(e, e->text->xpm);
-	if ((mvmnt == TRUE) && e->dmg == TRUE)
-		dmg_anim(e, lastpos[0], lastpos[1], e->cam);
-	e->dmg = FALSE;
+	if ((mvmnt == TRUE) && (int)e->cam->poscam[0] == e->map->arrival[0] &&
+	(int)e->cam->poscam[1] == e->map->arrival[1])
+		farrival(e);
+	else
+	{
+		clear_all(e, FALSE);
+		//
+		if (e->text->color_or_text == TRUE)
+			printf("..\n");
+		//
+		raycast_win_l(e, e->ray);
+		if (e->text->color_or_text == TRUE)
+			printf(".!.\n");
+		mlx_put_image_to_window(e->mlx, e->win, e->img->i_img, 0, 0);
+		interface_txt(e, e->text->xpm);
+		if (e->text->color_or_text == TRUE)
+			printf(".?.\n");
+		if ((mvmnt == TRUE) && e->dmg == TRUE)
+			dmg_anim(e, lastpos[0], lastpos[1], e->cam);
+		e->dmg = FALSE;
+	}
+}
+
+int			red_cross(int key, t_env *e)
+{
+	(void)key;
+	(void)*e;
+	system("killall afplay");
+	exit(0);
+	return (0);
 }
 
 static void	keyfonc_isalive(int key, t_env *e)
@@ -45,8 +68,6 @@ static void	keyfonc_isalive(int key, t_env *e)
 		e->text->color_or_text = TRUE;
 	else if (key == KEY_T && e->text->color_or_text != FALSE)
 		e->text->color_or_text = FALSE;
-	if (key == KEY_C)
-		e->text->color_or_text = (e->text->color_or_text != 2) ? 2 : 0;
 	trz(e, e->key);
 	if (key == KEY_M)
 	{

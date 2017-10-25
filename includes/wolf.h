@@ -6,7 +6,7 @@
 /*   By: myang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 18:49:00 by myang             #+#    #+#             */
-/*   Updated: 2017/09/28 18:04:59 by myang            ###   ########.fr       */
+/*   Updated: 2017/10/24 17:11:31 by myang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ typedef	struct		s_map
 	int				curx;
 	int				pxx;
 	int				pxy;
+	int				arrival[2];
 }					t_map;
 
 typedef struct		s_cam
@@ -106,6 +107,7 @@ typedef struct		s_cam
 typedef struct		s_xpm
 {
 	t_img			*skybox;
+	t_img			*xpm_t0;
 	t_img			*xpm_t1;
 	t_img			*xpm_t2;
 	t_img			*xpm_t3;
@@ -121,6 +123,7 @@ typedef struct		s_xpm
 	t_img			*xpm_weapon;
 	t_img			*xpm_wicon;
 	t_img			*gameover;
+	t_img			*arrival;
 }					t_xpm;
 
 typedef struct		s_text
@@ -134,7 +137,6 @@ typedef struct		s_text
 typedef struct		s_music
 {
 	int				selected;
-	int				select_sfx;
 }					t_music;
 
 typedef struct		s_env
@@ -154,9 +156,9 @@ typedef struct		s_env
 	int				dmg;
 	t_text			*text;
 	t_music			*music;
+	int				merror;
 }					t_env;
 
-t_img				*walltexturing(t_env *e, int wallnbr);
 t_img				*select_xpm(t_env *e, int walltextt);
 
 int					main(int ar, char **ac);
@@ -165,11 +167,16 @@ int					start_pos(t_env *e, t_map *map);
 int					map_error(t_env *e, t_map *map);
 int					mvmnt_camrott(t_env *e);
 int					mvmnt_camdir(t_env *e, t_cam *cam, int x, int y);
+int					txt_error(char *tmp);
+int					red_cross(int key, t_env *e);
 
 unsigned int		sleep(unsigned int time);
 
 double				wallx_val(t_env *e);
 
+void				farrival(t_env *e);
+void				init_xpm_text(t_env *e);
+void				walltexturing(t_env *e, int wallnbr, t_img *xpmt);
 void				cf_text_color(t_env *e, int y);
 void				clear_all(t_env *e, int call);
 void				clear_struct_displayed(t_env *e, int call);

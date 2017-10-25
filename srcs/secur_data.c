@@ -14,13 +14,14 @@
 
 void	xpmt_secur(t_env *e)
 {
-	e->text->xpm->xpm_t1 = walltexturing(e, 1);
-	e->text->xpm->xpm_t2 = walltexturing(e, 2);
-	e->text->xpm->xpm_t3 = walltexturing(e, 3);
-	e->text->xpm->xpm_t4 = walltexturing(e, 4);
-	e->text->xpm->xpm_t5 = walltexturing(e, 5);
-	e->text->xpm->xpm_t6 = walltexturing(e, 6);
-	e->text->xpm->xpm_t7 = walltexturing(e, 7);
+	walltexturing(e, 8, e->text->xpm->xpm_t0);
+	walltexturing(e, 1, e->text->xpm->xpm_t1);
+	walltexturing(e, 2, e->text->xpm->xpm_t2);
+	walltexturing(e, 3, e->text->xpm->xpm_t3);
+	walltexturing(e, 4, e->text->xpm->xpm_t4);
+	walltexturing(e, 5, e->text->xpm->xpm_t5);
+	walltexturing(e, 6, e->text->xpm->xpm_t6);
+	walltexturing(e, 7, e->text->xpm->xpm_t7);
 }
 
 void	init_struct(t_env *e)
@@ -45,14 +46,12 @@ void	init_bag(t_inv *inv, t_env *e)
 		quit_exe(e, FALSE) : 0;
 	(!(e->text->xpm->xpm_pv3 = (t_img*)malloc(sizeof(t_img)))) ?
 		quit_exe(e, FALSE) : 0;
-	(!(e->text->xpm->xpm_pv3 = (t_img*)malloc(sizeof(t_img)))) ?
-		quit_exe(e, FALSE) : 0;
 	(!(e->text->xpm->xpm_weapon = (t_img*)malloc(sizeof(t_img)))) ?
 		quit_exe(e, FALSE) : 0;
 	(!(e->text->xpm->xpm_wicon = (t_img*)malloc(sizeof(t_img)))) ?
 		quit_exe(e, FALSE) : 0;
 	inv->weapon->nbr = 0;
-	inv->tokken->nbr = 0;
+	e->inv->tokken->nbr = 0;
 	inv->ammo->nbr = 5;
 	inv->pv->nbr = 12;
 }
@@ -71,6 +70,8 @@ void	init_struct_displayed(t_env *e)
 		quit_exe(e, FALSE) : 0;
 	(!(e->text->xpm->gameover = (t_img*)malloc(sizeof(t_img)))) ?
 		quit_exe(e, FALSE) : 0;
+	(!(e->text->xpm->arrival = (t_img*)malloc(sizeof(t_img)))) ?
+		quit_exe(e, FALSE) : 0;
 	(!(e->inv = (t_inv*)malloc(sizeof(t_inv)))) ? quit_exe(e, FALSE) : 0;
 }
 
@@ -82,5 +83,6 @@ void	secur_init(t_env *e)
 	e->text->color_or_text = FALSE;
 	creat_win(e);
 	skybox(e);
+	init_xpm_text(e);
 	xpmt_secur(e);
 }

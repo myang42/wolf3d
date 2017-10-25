@@ -6,7 +6,7 @@
 /*   By: myang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/30 13:42:19 by myang             #+#    #+#             */
-/*   Updated: 2017/09/24 18:01:46 by myang            ###   ########.fr       */
+/*   Updated: 2017/10/24 17:25:50 by myang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,15 @@ void		sy_size(char *line, t_env *e)
 	e->map->s_y = size;
 }
 
-void		dup_or_join(char *book, char **l, char **line)
+void		dup_or_join(t_env *e, char *book, char **l, char **line)
 {
 	if (*l == NULL)
-		*line = ft_strdup(book);
+	{
+		if (book[0] != '\0')
+			*line = ft_strdup(book);
+		else
+			quit_error(e);
+	}
 	else
 	{
 		*line = ft_strjoin(*l, book);
@@ -74,13 +79,16 @@ static void	to_gnl(t_env *e, const int fd, char *line, t_map *map)
 	while ((rd = read(fd, book, BUFF_SIZE_GNL)) > 0)
 	{
 		book[rd] = '\0';
-		dup_or_join(book, &l, &line);
+		if ((e->merror = txt_error(book)) == 1)
+			quit_error(e);
+		dup_or_join(e, book, &l, &line);
 		l = ft_strdup(line);
 		ft_strdel(&line);
 		if (rd < BUFF_SIZE_GNL && ft_findme(book, '\0') != -1)
 			break ;
 		ft_bzero(book, BUFF_SIZE_GNL);
 	}
+	(rd == 0 && l == NULL) ? quit_error(e) : 0;
 	line = ft_strtrim(l);
 	sy_size(line, e);
 	ft_strdel(&l);

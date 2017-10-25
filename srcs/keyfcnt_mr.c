@@ -50,9 +50,11 @@ int		mvmnt_camdir(t_env *e, t_cam *cam, int x, int y)
 			e->map->tabmap[(int)(cam->poscam[1] +
 				(cam->vary * cam->vit) * 2)][x] == 2)
 		e->dmg = TRUE;
-	if (e->map->tabmap[y][(int)(cam->poscam[0] + cam->varx * cam->vit)] == 0)
+	if (e->map->tabmap[y][(int)(cam->poscam[0] + cam->varx * cam->vit)] == 0 ||
+	e->map->tabmap[y][(int)(cam->poscam[0] + cam->varx * cam->vit)] == 3)
 		cam->poscam[0] += cam->varx * cam->vit;
-	if (e->map->tabmap[(int)(cam->poscam[1] + cam->vary * cam->vit)][x] == 0)
+	if (e->map->tabmap[(int)(cam->poscam[1] + cam->vary * cam->vit)][x] == 0 ||
+	e->map->tabmap[(int)(cam->poscam[1] + cam->vary * cam->vit)][x] == 3)
 		cam->poscam[1] += cam->vary * cam->vit;
 	return (TRUE);
 }

@@ -14,6 +14,8 @@
 
 static char	*which_text(int walltextt)
 {
+	if (walltextt == 8)
+		return ("./textures/text_arrival.xpm");
 	if (walltextt == 1)
 		return ("./textures/text_wall00.xpm");
 	if (walltextt == 2)
@@ -35,8 +37,15 @@ t_img		*select_xpm(t_env *e, int walltextt)
 {
 	if (e->text->color_or_text == TRUE && e->cam->spewall == FALSE)
 		e->text->walltextt = e->cam->correct + 1;
-	else
-		e->text->walltextt = 7;
+	else if (e->text->color_or_text == TRUE && e->cam->spewall >= 1)
+	{
+		if (e->cam->spewall == 1)
+			walltextt = 7;
+		else
+			walltextt = 8;
+	}
+	if (walltextt == 8)
+		return (e->text->xpm->xpm_t0);
 	if (walltextt == 1)
 		return (e->text->xpm->xpm_t1);
 	if (walltextt == 2)
@@ -53,19 +62,38 @@ t_img		*select_xpm(t_env *e, int walltextt)
 		return (e->text->xpm->xpm_t7);
 }
 
-t_img		*walltexturing(t_env *e, int wallnbr)
+void		init_xpm_text(t_env *e)
+{
+	if (!(e->text->xpm->xpm_t0 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t1 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t2 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t3 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t4 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t5 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t6 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+	if (!(e->text->xpm->xpm_t7 = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
+}
+
+void		walltexturing(t_env *e, int wallnbr, t_img *xpmt)
 {
 	char	*wallname;
-	t_img	*xpmt;
 
-	wallname = which_text(wallnbr);
+	wallname = ft_strdup(which_text(wallnbr));
 	if (wallname == NULL)
 		quit_exe(e, FALSE);
-	if (!(xpmt = (t_img*)malloc(sizeof(t_img))))
+	if (!(xpmt->i_img = mlx_xpm_file_to_image(e->mlx, wallname,
+			&xpmt->textx, &xpmt->texty)))
 		quit_exe(e, FALSE);
-	xpmt->i_img = mlx_xpm_file_to_image(e->mlx, wallname,
-			&xpmt->textx, &xpmt->texty);
-	xpmt->bts = mlx_get_data_addr(xpmt->i_img, &xpmt->bpp,
-			&xpmt->size_line, &xpmt->endian);
-	return (xpmt);
+	if (!(xpmt->bts = mlx_get_data_addr(xpmt->i_img, &xpmt->bpp,
+			&xpmt->size_line, &xpmt->endian)))
+		quit_exe(e, FALSE);
+	ft_strdel(&wallname);
 }

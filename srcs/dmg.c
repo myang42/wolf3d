@@ -21,8 +21,8 @@ void	dmg_anim(t_env *e, double lastx, double lasty, t_cam *cam)
 	if (e->inv->pv->nbr <= 0)
 	{
 		sprite_data(e->text->xpm->gameover, "./textures/GameOver.xpm", e);
-		mlx_put_image_to_window(e->mlx, e->win,
-				e->text->xpm->gameover->i_img, 0, 0);
+		(!(mlx_put_image_to_window(e->mlx, e->win,
+				e->text->xpm->gameover->i_img, 0, 0))) ? quit_exe(e, TRUE) : 0;
 		mlx_string_put(e->mlx, e->win, 225, WIN_OH / 2 + 190, WHITE,
 				"Press ESC for QUIT");
 	}
@@ -32,4 +32,15 @@ void	dmg_anim(t_env *e, double lastx, double lasty, t_cam *cam)
 		mlx_put_image_to_window(e->mlx, e->win, e->img->i_img, 0, 0);
 		interface_txt(e, e->text->xpm);
 	}
+}
+
+void	farrival(t_env *e)
+{
+	e->inv->pv->nbr = -1;
+	clear_all(e, FALSE);
+	sprite_data(e->text->xpm->arrival, "./textures/arrival.xpm", e);
+	(!(mlx_put_image_to_window(e->mlx, e->win,
+			e->text->xpm->arrival->i_img, 0, 0))) ? quit_exe(e, TRUE) : 0;
+	mlx_string_put(e->mlx, e->win, 225, WIN_OH / 2 + 190, WHITE,
+			"Press ESC for QUIT");
 }

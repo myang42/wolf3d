@@ -23,12 +23,17 @@ void		text_to_bts(t_env *e, t_img *xpmt, int x, int y)
 	tmp = e->ray->perps;
 	tmp = (tmp > 8) ? 8 : tmp;
 	var = 1 - (tmp / 8);
-	r = ABS((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
+	x = x < 0 ? -x : x;
+	y = y < 0 ? -y : y;
+	r = ((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
 				((xpmt->bpp / 8) * xpmt->xy[1]) + 2]));
-	g = ABS((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
+	r = r < 0 ? -r : r;
+	g = ((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
 				((xpmt->bpp / 8) * xpmt->xy[1]) + 1]));
-	b = ABS((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
+	g = g < 0 ? -g : g;
+	b = ((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
 				((xpmt->bpp / 8) * xpmt->xy[1]) + 0]));
+	b = b < 0 ? -b : b;
 	e->bts[(y * e->img->size_line) + ((e->img->bpp / 8) * x) + 2] =
 		r * var + 0x0B * (1 - var);
 	e->bts[(y * e->img->size_line) + ((e->img->bpp / 8) * x) + 1] =
@@ -45,23 +50,53 @@ static void	text_to_bts_cf(t_env *e, t_img *xpmt, int x, int y)
 	double	var;
 	double	tmp;
 
+	x = x < 0 ? -x : x;
+	y = y < 0 ? -y : y;
 	xpmt->xy[0] %= xpmt->textx;
 	xpmt->xy[1] %= xpmt->texty;
 	tmp = (y > WIN_H / 2) ? WIN_H - y : y;
 	tmp = (tmp > WIN_H / 2.5) ? WIN_H / 2.5 : tmp;
 	var = 1 - (tmp / (WIN_H / 2.5));
-	r = ABS((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
+	r = ((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
 				((xpmt->bpp / 8) * xpmt->xy[1]) + 2]));
-	g = ABS((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
+	g = ((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
 				((xpmt->bpp / 8) * xpmt->xy[1]) + 1]));
-	b = ABS((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
+	b = ((xpmt->bts[(xpmt->xy[0] * xpmt->size_line) +
 				((xpmt->bpp / 8) * xpmt->xy[1]) + 0]));
+	r = r < 0 ? -r : r;
+	g = g < 0 ? -g : g;
+	b = b < 0 ? -b : b;
 	e->bts[(y * e->img->size_line) + ((e->img->bpp / 8) * x) + 2] =
 		r * var + 0x0B * (1 - var);
 	e->bts[(y * e->img->size_line) + ((e->img->bpp / 8) * x) + 1] =
 		g * var + 0x0B * (1 - var);
 	e->bts[(y * e->img->size_line) + ((e->img->bpp / 8) * x) + 0] =
 		b * var + 0x0B * (1 - var);
+}
+
+static void	cf_text(t_env *e, int y)
+{
+	e->text->xpm->xpm_t5->xy[1] = ((int)(e->img->cfx *
+		e->text->xpm->xpm_t5->textx) / 2);
+	e->text->xpm->xpm_t5->xy[0] = ((int)(e->img->cfy *
+		e->text->xpm->xpm_t5->texty) / 2);
+	text_to_bts_cf(e, e->text->xpm->xpm_t5, e->map->pxx, y);
+	if (((int)(e->img->cfx + (int)(e->img->cfy)) % 2) == 0)
+	{
+		e->text->xpm->xpm_t6->xy[1] = ((int)(e->img->cfx *
+			e->text->xpm->xpm_t6->textx) / 2);
+		e->text->xpm->xpm_t6->xy[0] = ((int)(e->img->cfy *
+			e->text->xpm->xpm_t6->texty) / 2);
+		text_to_bts_cf(e, e->text->xpm->xpm_t6, e->map->pxx, WIN_H - y);
+	}
+	else
+	{
+		e->text->xpm->xpm_t4->xy[1] = ((int)(e->img->cfx *
+			e->text->xpm->xpm_t4->textx) / 2);
+		e->text->xpm->xpm_t4->xy[0] = ((int)(e->img->cfy *
+			e->text->xpm->xpm_t4->texty) / 2);
+		text_to_bts_cf(e, e->text->xpm->xpm_t4, e->map->pxx, WIN_H - y);
+	}
 }
 
 void		wall_or_cf(t_env *e, int y, int cfw)
@@ -79,18 +114,7 @@ void		wall_or_cf(t_env *e, int y, int cfw)
 		text_to_bts(e, xpmt, e->map->pxx, y);
 	}
 	else if (cfw == TRUE)
-	{
-		e->text->xpm->xpm_t5->xy[1] = ((int)(e->img->cfx *
-					e->text->xpm->xpm_t5->textx) / 2);
-		e->text->xpm->xpm_t5->xy[0] = ((int)(e->img->cfy *
-					e->text->xpm->xpm_t5->texty) / 2);
-		text_to_bts_cf(e, e->text->xpm->xpm_t5, e->map->pxx, y);
-		e->text->xpm->xpm_t6->xy[1] = ((int)(e->img->cfx *
-					e->text->xpm->xpm_t6->textx) / 2);
-		e->text->xpm->xpm_t6->xy[0] = ((int)(e->img->cfy *
-					e->text->xpm->xpm_t6->texty) / 2);
-		text_to_bts_cf(e, e->text->xpm->xpm_t6, e->map->pxx, WIN_H - y);
-	}
+		cf_text(e, y);
 }
 
 void		text_put_img(t_env *e, int y, int cfw)
@@ -99,31 +123,7 @@ void		text_put_img(t_env *e, int y, int cfw)
 		wall_or_cf(e, y, cfw);
 	else if (e->text->color_or_text == 0 || e->text->color_or_text == 2)
 	{
-		if (e->text->color_or_text == 2)
-		{
-			e->text->xpm->skybox->xy[0] = (int)e->map->pxy;
-			e->text->xpm->skybox->xy[1] = (int)e->map->pxx;
-			text_to_bts(e, e->text->xpm->skybox, e->map->pxx, WIN_H - y - 1);
-		}
-		else
-			pix_put_cf(e, WIN_H - 1 - y, e->map->pxx, PINK);
+		pix_put_cf(e, WIN_H - 1 - y, e->map->pxx, PINK);
 		pix_put_cf(e, y, e->map->pxx, GREY);
 	}
-}
-
-void		basiccolor_or_text(t_env *e, int x, int y)
-{
-	int color;
-
-	if (e->text->color_or_text != TRUE)
-	{
-		color = RED_D;
-		color = (e->cam->correct == 1) ? BLUE_D : color;
-		color = (e->cam->correct == 2) ? YELLOW_L : color;
-		color = (e->cam->correct == 3) ? GREEN_D : color;
-		color = (e->cam->spewall == TRUE) ? WHITE : color;
-		pix_put_img(e, y, x, color);
-	}
-	else
-		text_put_img(e, y, FALSE);
 }

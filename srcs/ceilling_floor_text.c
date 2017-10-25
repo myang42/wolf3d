@@ -42,13 +42,18 @@ void	val_floor_ceilling(t_env *e, int y)
 	double	w;
 
 	dist = (double)((WIN_H) / (2.0 * y - WIN_H));
+	// dist = (double)(y / WIN_H);
 	w = (double)(dist / e->ray->perps);
 	e->img->cfx = (w * e->ray->floorval[0] + (1.0 - w) * e->cam->poscam[0]);
 	e->img->cfy = (w * e->ray->floorval[1] + (1.0 - w) * e->cam->poscam[1]);
+	printf("e->img->cfx = %f | %f\n", e->img->cfx, e->img->cfy);
+	printf("%f | %f .. %f\n", w, e->ray->floorval[0], e->ray->floorval[1]);
+	printf("DIST %f | PERPS %f\n", dist, e->ray->perps);
 }
 
 void	skybox(t_env *e)
 {
-	e->text->xpm->skybox = (t_img*)malloc(sizeof(t_img));
+	if (!(e->text->xpm->skybox = (t_img*)malloc(sizeof(t_img))))
+		quit_exe(e, FALSE);
 	sprite_data(e->text->xpm->skybox, "./textures/skybox.xpm", e);
 }

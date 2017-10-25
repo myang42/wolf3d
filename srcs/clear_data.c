@@ -48,42 +48,27 @@ void		clear_all(t_env *e, int call)
 	}
 	if (call == FALSE)
 	{
-		e->img->i_img = mlx_new_image(e->mlx, WIN_L, WIN_H);
-		e->bts = mlx_get_data_addr(e->img->i_img, \
-			&e->img->bpp, &e->img->size_line, &e->img->endian);
+		if (!(e->img->i_img = mlx_new_image(e->mlx, WIN_L, WIN_H)))
+			quit_exe(e, FALSE);
+		if (!(e->bts = mlx_get_data_addr(e->img->i_img,
+			&e->img->bpp, &e->img->size_line, &e->img->endian)))
+			quit_exe(e, FALSE);
 	}
 }
 
 void		clear_struct_displayed(t_env *e, int call)
 {
 	(call == TRUE) ? clear_all(e, FALSE) : 0;
-	free(e->mmapdisplay);
-	free(e->ray);
-	free(e->key);
-	free(e->text->xpm->window_1);
-	free(e->text->xpm->minimap);
-	free(e->text->xpm->gameover);
-	free(e->text->xpm->xpm_t1);
-	free(e->text->xpm->xpm_t2);
-	free(e->text->xpm->xpm_t3);
-	free(e->text->xpm->xpm_t4);
-	free(e->text->xpm->xpm_t7);
-	free(e->text->xpm->xpm_t6);
-	free(e->text->xpm->xpm_t5);
-	free(e->text->xpm->xpm_pv1);
-	free(e->text->xpm->xpm_pv2);
-	free(e->text->xpm->xpm_pv3);
-	free(e->text->xpm->xpm_wicon);
-	free(e->text->xpm->xpm_weapon);
-	free(e->text->xpm);
-	free(e->text);
-	free(e->inv);
 }
 
 void		clear_struct_init(t_env *e)
 {
-	free(e->cam);
-	free(e->map->tabmap);
-	free(e->map);
-	free(e->img);
+	if (e->cam)
+		free(e->cam);
+	if (e->map->tabmap)
+		free(e->map->tabmap);
+	if (e->map)
+		free(e->map);
+	if (e->img)
+		free(e->img);
 }

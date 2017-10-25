@@ -13,18 +13,6 @@
 #include "../includes/wolf.h"
 #include <math.h>
 
-double		wallx_val(t_env *e)
-{
-	double	wallx;
-
-	if (e->cam->correct < 2)
-		wallx = e->ray->raypos[1] + e->ray->perps * e->ray->raydir[1];
-	else
-		wallx = e->ray->raypos[0] + e->ray->perps * e->ray->raydir[0];
-	wallx -= (int)(wallx);
-	return (wallx);
-}
-
 static void	ray_impact_dist(t_ray *ray, int *y, int *x)
 {
 	if (ray->raydir[0] < 0)
@@ -47,6 +35,16 @@ static void	ray_impact_dist(t_ray *ray, int *y, int *x)
 		ray->step[1] = 1;
 		ray->sidedist[1] = (1.0 + *y - ray->raypos[1]) * ray->dist[1];
 	}
+}
+
+int			spewall_check(int curx, int cury, int **map)
+{
+	int	res;
+
+	res = 0;
+	if (map[cury][curx] >= 2)
+		res = (map[cury][curx] == 3) ? 2 : 1;
+	return (res);
 }
 
 static void	ray_impact(t_env *e, t_ray *ray, int *curx, int *cury)
@@ -74,7 +72,7 @@ static void	ray_impact(t_env *e, t_ray *ray, int *curx, int *cury)
 		}
 		e->impact = (e->map->tabmap[*cury][*curx] != 0) ? 1 : 0;
 	}
-	e->cam->spewall = (e->map->tabmap[*cury][*curx] == 2) ? TRUE : FALSE;
+	e->cam->spewall = spewall_check(*curx, *cury, e->map->tabmap);
 }
 
 static void	ray_on_win_l(int x, t_env *e, t_ray *ray)

@@ -47,6 +47,8 @@
 # define KEY_N 45
 # define KEY_M 46
 # define KEY_ESC 53
+# define KEY_ENTER 36
+# define KEY_ENTER2 76
 
 # define KEY_1 18
 # define KEY_2 19
